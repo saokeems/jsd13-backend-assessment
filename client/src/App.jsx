@@ -28,11 +28,23 @@ const App = () => {
     fetchProducts();
   }, []);
 
+  const handleEdit = (product) => {
+    setEditProduct(product.id);
+    setFormData({
+      name: product.name,
+      price: product.price,
+      quantity: product.quantity,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(API_URL, formData);
-
+      if (editProduct) {
+        await axios.put(`${API_URL}/${editProduct}`, formData);
+      } else {
+        await axios.post(API_URL, formData);
+      }
       setFormData({
         name: "",
         price: "",
@@ -44,15 +56,15 @@ const App = () => {
     }
   };
 
-  
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
       <h1 className="text-2xl font-bold mb-8">ตารางแสดงรายการสินค้า</h1>
 
-      <div className="w-full mb-8">
-        <h2 className="text-xl font-bold mb-4">เพิ่มสินค้าใหม่</h2>
-        <form onSubmit={handleSubmit} className="flex gap-4 w-full">
+      <div className="w-full mb-8 flex flex-col">
+        <h2 className="text-xl font-bold mb-4">
+          {editProduct ? "แก้ไขข้อมูลสินค้า" : "เพิ่มสินค้าใหม่"}
+        </h2>
+        <form onSubmit={handleSubmit} className="flex gap-4 w-full flex-wrap">
           <input
             type="text"
             placeholder="ชื่อสินค้า"
@@ -80,13 +92,32 @@ const App = () => {
             }
             className="p-2 rounded-md bg-white flex-1"
             required
+            min="1"
           />
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-800"
-          >
-            Save
-          </button>
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-800"
+            >
+              {editProduct ? "บันทึก" : "เพิ่ม"}
+            </button>
+            {editProduct && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditProduct(null);
+                  setFormData({
+                    name: "",
+                    price: "",
+                    quantity: 1,
+                  });
+                }}
+                className="bg-slate-600 text-white px-3 py-2 rounded-md hover:bg-slate-800"
+              >
+                ยกเลิก
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
@@ -96,7 +127,8 @@ const App = () => {
             <tr>
               <th className="px-6 py-2 text-center border-r">ชื่อสินค้า</th>
               <th className="px-6 py-2 text-center border-r">ราคา (บาท)</th>
-              <th className="px-6 py-2 text-center">จำนวนคงเหลือ</th>
+              <th className="px-6 py-2 text-center border-r">จำนวนคงเหลือ</th>
+              <th className="px-6 py-2 text-center">action</th>
             </tr>
           </thead>
           <tbody className="bg-white">
@@ -106,6 +138,14 @@ const App = () => {
                   <td className="px-6 py-4">{product.name}</td>
                   <td className="px-6 py-4">฿{product.price}</td>
                   <td className="px-6 py-4">{product.quantity}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-800"
+                    >
+                      แก้ไข
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
