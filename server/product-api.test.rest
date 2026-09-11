@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:3001/products
+
+### Read all products
+GET {{baseUrl}}
+
+### Read a product
+GET {{baseUrl}}/1789098329394
+
+### Create new product
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name":"Noodle Cup",
+  "price":"20",
+  "quantity":"30"
+}
+
+### Update a product
+PUT {{baseUrl}}/1710000000005
+Content-Type: application/json
+
+{
+  "name":"Monitor 4k",
+  "price":"20",
+  "quantity":"30"
+}
+
+### Delete a product
+DELETE {{baseUrl}}/1710000000005
