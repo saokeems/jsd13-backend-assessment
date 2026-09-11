@@ -56,6 +56,15 @@ const App = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      setProducts(products.filter((product) => product.id !== id));
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
       <h1 className="text-2xl font-bold mb-8">ตารางแสดงรายการสินค้า</h1>
@@ -138,19 +147,25 @@ const App = () => {
                   <td className="px-6 py-4">{product.name}</td>
                   <td className="px-6 py-4">฿{product.price}</td>
                   <td className="px-6 py-4">{product.quantity}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
                     <button
                       onClick={() => handleEdit(product)}
-                      className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-800"
+                      className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-800"
                     >
                       แก้ไข
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="text-red-600 hover:text-red-900 bg-red-100 px-3 py-1 rounded-md"
+                    >
+                      ลบ
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="px-6 py-8 text-center">
+                <td colSpan="4" className="px-6 py-8 text-center">
                   กำลังโหลดข้อมูล...
                 </td>
               </tr>
