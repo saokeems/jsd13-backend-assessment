@@ -14,13 +14,31 @@ app.use((req, res, next) => {
 // get all products
 app.get("/products", (req, res, next) => {
   try {
-    return res.status(200).json({ success: true, products });
+    const { name, sortBy, order } = req.query;
+    let result = [...products];
+
+    if (name) {
+      result = result.filter((product) =>
+        product.name.toLowerCase().includes(name.toLowerCase()),
+      );
+    }
+
+    if (sortBy === "price") {
+      result.sort((a, b) => {
+        if (order === "desc") {
+          return b.price - a.price;
+        }
+        return a.price - b.price;
+      });
+    }
+
+    return res.status(200).json({ success: true, data: result });
   } catch (error) {
     next(error);
   }
 });
 
-// all a product
+// get a product
 app.get("/products/:id", (req, res, next) => {
   try {
     const { id } = req.params;
@@ -32,7 +50,7 @@ app.get("/products/:id", (req, res, next) => {
         .json({ success: false, message: "Product not found!" });
     }
 
-    return res.status(200).json({ success: true, product });
+    return res.status(200).json({ success: true, data: product });
   } catch (error) {
     next(error);
   }
@@ -59,7 +77,7 @@ app.post("/products", (req, res, next) => {
     };
 
     products.push(newProduct);
-    return res.status(200).json({ success: true, newProduct });
+    return res.status(200).json({ success: true, data: newProduct });
   } catch (error) {
     next(error);
   }
@@ -89,7 +107,7 @@ app.put("/products/:id", (req, res, next) => {
     product.price = price;
     product.quantity = quantity;
 
-    return res.status(200).json({ success: true, product });
+    return res.status(200).json({ success: true, data: product });
   } catch (error) {
     next(error);
   }
@@ -106,10 +124,12 @@ app.delete("/products/:id", (req, res, next) => {
         .json({ success: false, message: "Product not found!" });
     }
 
-    products.splice(index, 1);
-    return res
-      .status(200)
-      .json({ success: true, message: "Product deleted!!!" });
+    const deletedProduct = products.splice(index, 1);
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted!!!",
+      data: deletedProduct,
+    });
   } catch (error) {
     next(error);
   }

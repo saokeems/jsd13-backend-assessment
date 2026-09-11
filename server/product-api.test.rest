@@ -3,8 +3,11 @@
 ### Read all products
 GET {{baseUrl}}
 
+### Read all products
+GET {{baseUrl}}?sortBy=price&order=desc
+
 ### Read a product
-GET {{baseUrl}}/1789098329394
+GET {{baseUrl}}/1710000000005
 
 ### Create new product
 POST {{baseUrl}}
@@ -27,4 +30,4 @@ Content-Type: application/json
 }
 
 ### Delete a product
-DELETE {{baseUrl}}/1710000000005
+DELETE {{baseUrl}}/1710000000004
