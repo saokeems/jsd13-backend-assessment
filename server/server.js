@@ -4,6 +4,11 @@ import { products } from "./fakeDB/fakeProducts.js";
 const app = express();
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()} ] ${req.method} ${req.url}`);
+  next();
+});
+
 // get all products
 app.get("/products", (req, res, next) => {
   try {
