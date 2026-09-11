@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
+import ProductForm from "./components/ProductForm";
+import ProductTable from "./components/ProductTable";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -56,6 +58,7 @@ const App = () => {
         price: "",
         quantity: 1,
       });
+      setEditProduct(null);
       fetchProducts();
     } catch (error) {
       console.error("Error saving product:", error);
@@ -81,116 +84,23 @@ const App = () => {
         </div>
       )}
 
-      <div className="w-full mb-8 flex flex-col">
-        <h2 className="text-xl font-bold mb-4">
-          {editProduct ? "แก้ไขข้อมูลสินค้า" : "เพิ่มสินค้าใหม่"}
-        </h2>
-        <form onSubmit={handleSubmit} className="flex gap-4 w-full flex-wrap">
-          <input
-            type="text"
-            placeholder="ชื่อสินค้า"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="p-2 rounded-md bg-white flex-1"
-            required
-          />
-          <input
-            type="text"
-            placeholder="ราคา (บาท)"
-            value={formData.price}
-            onChange={(e) =>
-              setFormData({ ...formData, price: e.target.value })
-            }
-            className="p-2 rounded-md bg-white flex-1"
-            required
-          />
-          <input
-            type="number"
-            placeholder="จำนวนสินค้า"
-            value={formData.quantity}
-            onChange={(e) =>
-              setFormData({ ...formData, quantity: e.target.value })
-            }
-            className="p-2 rounded-md bg-white flex-1"
-            required
-            min="1"
-          />
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-800"
-            >
-              {editProduct ? "บันทึก" : "เพิ่ม"}
-            </button>
-            {editProduct && (
-              <button
-                type="button"
-                onClick={() => {
-                  setEditProduct(null);
-                  setFormData({
-                    name: "",
-                    price: "",
-                    quantity: 1,
-                  });
-                }}
-                className="bg-slate-600 text-white px-3 py-2 rounded-md hover:bg-slate-800"
-              >
-                ยกเลิก
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
+      <ProductForm
+        formData={formData}
+        setFormData={setFormData}
+        editProduct={editProduct}
+        onSubmit={handleSubmit}
+        onCancel={() => {
+          setEditProduct(null);
+          setFormData({ name: "", price: "", quantity: 1 });
+        }}
+      />
 
-      <div className="w-full max-w-3xl bg-white ">
-        <table className="w-full border">
-          <thead className="bg-gray-200 border-b">
-            <tr>
-              <th className="px-6 py-2 text-center border-r">ชื่อสินค้า</th>
-              <th className="px-6 py-2 text-center border-r">ราคา (บาท)</th>
-              <th className="px-6 py-2 text-center border-r">จำนวนคงเหลือ</th>
-              <th className="px-6 py-2 text-center">action</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white">
-            {isLoading ? (
-              <tr>
-                <td colSpan="4" className="px-6 py-8 text-center">
-                  กำลังโหลดข้อมูล...
-                </td>
-              </tr>
-            ) : products.length > 0 ? (
-              products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50 text-center">
-                  <td className="px-6 py-4">{product.name}</td>
-                  <td className="px-6 py-4">฿{product.price}</td>
-                  <td className="px-6 py-4">{product.quantity}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
-                    <button
-                      onClick={() => handleEdit(product)}
-                      className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-800"
-                    >
-                      แก้ไข
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="text-red-600 hover:text-red-900 bg-red-100 px-3 py-1 rounded-md"
-                    >
-                      ลบ
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="px-6 py-8 text-center">
-                  ยังไม่มีสินค้า
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <ProductTable
+        products={products}
+        isLoading={isLoading}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };
