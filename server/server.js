@@ -3,7 +3,12 @@ import cors from "cors";
 import { products } from "./fakeDB/fakeProducts.js";
 
 const app = express();
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  }),
+);
 app.use(express.json());
 
 app.use((req, res, next) => {
