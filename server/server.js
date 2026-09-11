@@ -51,7 +51,7 @@ app.get("/products/:id", (req, res, next) => {
 
     if (!product) {
       return res
-        .status(200)
+        .status(404)
         .json({ success: false, message: "Product not found!" });
     }
 
@@ -82,7 +82,7 @@ app.post("/products", (req, res, next) => {
     };
 
     products.push(newProduct);
-    return res.status(200).json({ success: true, data: newProduct });
+    return res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
     next(error);
   }
@@ -97,12 +97,12 @@ app.put("/products/:id", (req, res, next) => {
 
     if (!product) {
       return res
-        .status(400)
+        .status(404)
         .json({ success: false, message: "Product not found" });
     }
 
     if (!name || !price || !quantity) {
-      return res.status.json({
+      return res.status(400).json({
         success: false,
         message: "name, price and quantity are required!",
       });
@@ -125,7 +125,7 @@ app.delete("/products/:id", (req, res, next) => {
 
     if (index === -1) {
       return res
-        .status(400)
+        .status(404)
         .json({ success: false, message: "Product not found!" });
     }
 
