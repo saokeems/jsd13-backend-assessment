@@ -13,14 +13,20 @@ const App = () => {
   });
   const [editProduct, setEditProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchProducts = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const res = await axios.get(API_URL);
       const data = res.data.data;
       setProducts(data);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setError("Error fetching products");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +58,7 @@ const App = () => {
       });
       fetchProducts();
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error("Error saving product:", error);
     }
   };
 
@@ -68,6 +74,12 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
       <h1 className="text-2xl font-bold mb-8">ตารางแสดงรายการสินค้า</h1>
+
+      {error && (
+        <div className="w-full mb-4 p-4 bg-red-100 text-red-700 rounded-md text-center border border-red-300">
+          {error}
+        </div>
+      )}
 
       <div className="w-full mb-8 flex flex-col">
         <h2 className="text-xl font-bold mb-4">
@@ -141,7 +153,13 @@ const App = () => {
             </tr>
           </thead>
           <tbody className="bg-white">
-            {products.length > 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan="4" className="px-6 py-8 text-center">
+                  กำลังโหลดข้อมูล...
+                </td>
+              </tr>
+            ) : products.length > 0 ? (
               products.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50 text-center">
                   <td className="px-6 py-4">{product.name}</td>
@@ -166,7 +184,7 @@ const App = () => {
             ) : (
               <tr>
                 <td colSpan="4" className="px-6 py-8 text-center">
-                  กำลังโหลดข้อมูล...
+                  ยังไม่มีสินค้า
                 </td>
               </tr>
             )}
