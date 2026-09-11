@@ -19,7 +19,7 @@ npm install
 **ฝั่ง Client**
 
 ```bash
-cd server
+cd client
 npm install
 ```
 
@@ -43,16 +43,12 @@ VITE_API_URL=http://localhost:3001/products
 
 ### 3. Start Application
 
-- server/.env
-
 ```
 cd server
 npm run dev
 ```
 
 _รันบนพอร์ต : http://localhost:3001_
-
-- client/.env
 
 ```
 cd client
